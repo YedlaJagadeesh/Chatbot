@@ -1,4 +1,4 @@
-const backendUrl = "http://localhost:11434/api/generate";
+const backendUrl = "http://172.17.15.98:11434/api/generate";
 
 function addMessage(text, sender) {
     const chatWindow = document.getElementById("chat-window");
@@ -33,3 +33,4 @@ async function sendMessage() {
         console.error(err);
     }
 }
+
