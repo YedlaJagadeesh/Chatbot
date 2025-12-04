@@ -1,4 +1,4 @@
-const backendUrl = "https://abcd1234.ngrok.io/api/generate"; // your ngrok URL
+const backendUrl = "https://finespun-endamoebic-slyvia.ngrok-free.dev/api/generate";
 
 // Function to add messages to chat window
 function addMessage(text, sender) {
@@ -61,4 +61,5 @@ document.querySelector(".chat-input button").addEventListener("click", sendMessa
 document.getElementById("user-input").addEventListener("keypress", (e) => {
     if (e.key === "Enter") sendMessage();
 });
+
 
