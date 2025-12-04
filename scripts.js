@@ -7,6 +7,7 @@ function addMessage(text, sender) {
     msgDiv.textContent = text;
     chatWindow.appendChild(msgDiv);
     chatWindow.scrollTop = chatWindow.scrollHeight;
+    return msgDiv;
 }
 
 async function sendMessage() {
@@ -17,6 +18,8 @@ async function sendMessage() {
     addMessage(text, "user");
     input.value = "";
 
+    const botDiv = addMessage("", "bot"); // create empty bot message
+
     try {
         const response = await fetch(backendUrl, {
             method: "POST",
@@ -26,11 +29,27 @@ async function sendMessage() {
                 prompt: text
             })
         });
-        const data = await response.json();
-        addMessage(data.response, "bot");
+
+        if (!response.body) {
+            botDiv.textContent = "⚠️ Streaming not supported";
+            return;
+        }
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let done = false;
+
+        while (!done) {
+            const { value, done: doneReading } = await reader.read();
+            done = doneReading;
+            if (value) {
+                botDiv.textContent += decoder.decode(value);
+                const chatWindow = document.getElementById("chat-window");
+                chatWindow.scrollTop = chatWindow.scrollHeight;
+            }
+        }
     } catch (err) {
-        addMessage("⚠️ Error contacting backend", "bot");
+        botDiv.textContent = "⚠️ Error contacting backend";
         console.error(err);
     }
 }
-
