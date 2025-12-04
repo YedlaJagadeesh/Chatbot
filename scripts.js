@@ -1,17 +1,12 @@
-// Replace this with your ngrok URL
-const backendUrl = "https://finespun-endamoebic-slyvia.ngrok-free.dev/api/generate";
+const backendUrl = "http://172.17.15.98:5000/generate";
 
-// Optional CORS proxy for GitHub Pages (testing only)
-const proxyUrl = "https://corsproxy.io/?"; // you can remove this if CORS headers are set
-
-function addMessage(text, sender) {
+function addMessage(sender, text) {
     const chatWindow = document.getElementById("chat-window");
-    const msgDiv = document.createElement("div");
-    msgDiv.classList.add("message", sender);
-    msgDiv.textContent = text;
-    chatWindow.appendChild(msgDiv);
+    const msg = document.createElement("div");
+    msg.classList.add("message", sender);
+    msg.textContent = text;
+    chatWindow.appendChild(msg);
     chatWindow.scrollTop = chatWindow.scrollHeight;
-    return msgDiv;
 }
 
 async function sendMessage() {
@@ -19,60 +14,20 @@ async function sendMessage() {
     const text = input.value.trim();
     if (!text) return;
 
-    addMessage(text, "user");
+    addMessage("user", text);
     input.value = "";
-    input.disabled = true; // disable input while bot is typing
-
-    const botDiv = addMessage("", "bot");
-    
-    // Blinking cursor while streaming
-    let cursorInterval = setInterval(() => {
-        if (!botDiv.textContent.endsWith("|")) {
-            botDiv.textContent += "|";
-        } else {
-            botDiv.textContent = botDiv.textContent.slice(0, -1);
-        }
-    }, 500);
 
     try {
-        const response = await fetch(proxyUrl + backendUrl, {
+        const res = await fetch(backendUrl, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ model: "phi", prompt: text })
+            body: JSON.stringify({ prompt: text })
         });
 
-        if (!response.body) {
-            botDiv.textContent = "⚠️ Streaming not supported";
-            clearInterval(cursorInterval);
-            input.disabled = false;
-            return;
-        }
-
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder();
-        let done = false;
-        botDiv.textContent = ""; // clear before streaming
-
-        while (!done) {
-            const { value, done: doneReading } = await reader.read();
-            done = doneReading;
-            if (value) {
-                botDiv.textContent += decoder.decode(value);
-                const chatWindow = document.getElementById("chat-window");
-                chatWindow.scrollTop = chatWindow.scrollHeight;
-            }
-        }
+        const data = await res.json();
+        addMessage("bot", data.response);
     } catch (err) {
-        botDiv.textContent = "⚠️ Error contacting backend";
+        addMessage("bot", "⚠ Error connecting to server.");
         console.error(err);
-    } finally {
-        clearInterval(cursorInterval); // stop cursor
-        input.disabled = false;
-        input.focus();
     }
 }
-
-// Send message on Enter key
-document.getElementById("user-input").addEventListener("keypress", function(e) {
-    if (e.key === "Enter") sendMessage();
-});
