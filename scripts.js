@@ -1,11 +1,11 @@
 const backendUrl = "http://172.17.15.98:5000/generate";
 
-function addMessage(sender, text) {
+function addMessage(text, sender) {
     const chatWindow = document.getElementById("chat-window");
-    const msg = document.createElement("div");
-    msg.classList.add("message", sender);
-    msg.textContent = text;
-    chatWindow.appendChild(msg);
+    const msgDiv = document.createElement("div");
+    msgDiv.classList.add("message", sender);
+    msgDiv.textContent = text;
+    chatWindow.appendChild(msgDiv);
     chatWindow.scrollTop = chatWindow.scrollHeight;
 }
 
@@ -14,20 +14,20 @@ async function sendMessage() {
     const text = input.value.trim();
     if (!text) return;
 
-    addMessage("user", text);
+    addMessage(text, "user");
     input.value = "";
 
     try {
-        const res = await fetch(backendUrl, {
+        const response = await fetch(backendUrl, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ prompt: text })
         });
 
-        const data = await res.json();
-        addMessage("bot", data.response);
+        const data = await response.json();
+        addMessage(data.reply, "bot");
     } catch (err) {
-        addMessage("bot", "⚠ Error connecting to server.");
+        addMessage("⚠ Error contacting backend", "bot");
         console.error(err);
     }
 }
