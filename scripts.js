@@ -1,4 +1,4 @@
-const backendUrl = "https://YOUR_BACKEND_URL_HERE/generate";
+const backendUrl = "http://localhost:11434/api/generate";
 
 function addMessage(text, sender) {
     const chatWindow = document.getElementById("chat-window");
@@ -21,11 +21,15 @@ async function sendMessage() {
         const response = await fetch(backendUrl, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ prompt: text })
+            body: JSON.stringify({
+                model: "phi",
+                prompt: text
+            })
         });
         const data = await response.json();
         addMessage(data.response, "bot");
     } catch (err) {
         addMessage("⚠️ Error contacting backend", "bot");
+        console.error(err);
     }
 }
