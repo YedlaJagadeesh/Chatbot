@@ -1,7 +1,5 @@
-// MCP server URL (make sure container is running)
-const backendUrl = "http://172.17.15.98:5000/generate";
+const backendUrl = "http://172.17.15.98:5000/generate"; // MCP server URL
 
-// Add message to chat window
 function addMessage(text, sender) {
     const chatWindow = document.getElementById("chat-window");
     const msgDiv = document.createElement("div");
@@ -11,7 +9,6 @@ function addMessage(text, sender) {
     chatWindow.scrollTop = chatWindow.scrollHeight;
 }
 
-// Send user message to MCP and display response
 async function sendMessage() {
     const input = document.getElementById("user-input");
     const text = input.value.trim();
@@ -26,7 +23,6 @@ async function sendMessage() {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ prompt: text })
         });
-
         const data = await response.json();
         addMessage(data.reply, "bot");
     } catch (err) {
