@@ -1,4 +1,4 @@
-const backendUrl = "http://172.17.15.98:11434/api/generate"; // your Ollama Phi API
+const backendUrl = "https://abcd1234.ngrok.io/api/generate"; // your ngrok URL
 
 // Function to add messages to chat window
 function addMessage(text, sender) {
@@ -61,3 +61,4 @@ document.querySelector(".chat-input button").addEventListener("click", sendMessa
 document.getElementById("user-input").addEventListener("keypress", (e) => {
     if (e.key === "Enter") sendMessage();
 });
+
