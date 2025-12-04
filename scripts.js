@@ -1,13 +1,4 @@
-const backendUrl = "http://172.17.15.98:5000/generate";
-
-function addMessage(text, sender) {
-    const chatWindow = document.getElementById("chat-window");
-    const msgDiv = document.createElement("div");
-    msgDiv.classList.add("message", sender);
-    msgDiv.textContent = text;
-    chatWindow.appendChild(msgDiv);
-    chatWindow.scrollTop = chatWindow.scrollHeight;
-}
+const backendUrl = "http://172.17.15.98:5000/generate"; // MCP URL
 
 async function sendMessage() {
     const input = document.getElementById("user-input");
@@ -27,7 +18,7 @@ async function sendMessage() {
         const data = await response.json();
         addMessage(data.reply, "bot");
     } catch (err) {
-        addMessage("⚠ Error contacting backend", "bot");
+        addMessage("⚠️ Error contacting backend", "bot");
         console.error(err);
     }
 }
